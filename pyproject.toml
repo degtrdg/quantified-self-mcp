@@ -1,0 +1,23 @@
+[project]
+name = "spreadsheet-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Daniel George", email = "66440666+degtrdg@users.noreply.github.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "psycopg2-binary>=2.9.10",
+    "python-dotenv>=1.1.1",
+]
+
+[project.scripts]
+mcp-server = "apps.mcp_server.src:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["apps", "shared"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
