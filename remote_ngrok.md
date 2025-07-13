@@ -1,6 +1,6 @@
 1. run mcp server:
 
-npx -y supergateway --stdio "uv run sqlite-server.py"
+npx -y supergateway --stdio "uv run sqlite_server.py"
 
 2. run proxy:
 
