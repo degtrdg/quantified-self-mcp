@@ -7,19 +7,20 @@ This is a **quantified self tracking system** that uses AI to process photos/tex
 **Purpose**: Capture quantified self data (workouts, food, sleep, mood) from photos/text with AI assistance.
 
 **Architecture**:
-- **MCP Server** - 5 AI tools for SQL database interaction
+- **MCP Server** - 6 AI tools for SQL database interaction with metadata learning system
 - **n8n Agents** - 3-agent pipeline for data processing  
-- **Supabase PostgreSQL** - Database with metadata system
+- **Supabase PostgreSQL** - Database with AI learning and metadata system
 
 ## Core MCP Tools
 
-The system provides 5 tools for AI interaction with the database:
+The system provides 6 tools for AI interaction with the database:
 
-1. **`list_tables`** - Discover existing tables, schemas, and recent data
+1. **`list_tables`** - Discover existing tables, schemas, AI learnings, and recent data
 2. **`create_table`** - Create new tables with metadata for new data types
-3. **`add_column`** - Evolve schemas by adding columns to existing tables
-4. **`insert_data`** - Store extracted data with auto-timestamps
-5. **`query_data`** - Analyze patterns with SQL queries
+3. **`edit_table_schema`** - Evolve schemas by adding/removing/modifying columns
+4. **`view_table`** - Inspect table structure and sample data in detail
+5. **`insert_data`** - Store extracted data with auto-timestamps and AI learning updates
+6. **`query_data`** - Analyze patterns with SQL queries
 
 ## Database Schema Patterns
 
@@ -78,16 +79,52 @@ The system uses **strict error handling** with no fallbacks:
 ## Key Features
 
 - **Natural Schema Evolution**: AI decides when to create new tables vs extend existing ones
-- **Metadata System**: Tables and columns have descriptions to guide AI decisions
+- **AI Learning & Memory System**: Tables store metadata and AI learnings for improved decision-making
 - **Cross-Domain Analysis**: SQL queries can correlate workouts, nutrition, sleep, and mood
+- **Metadata-Driven Intelligence**: Each table accumulates knowledge about data patterns, usage, and context
 - **Prompt-Driven**: Each tool has rich context to guide AI behavior
+
+## AI Learning & Memory System
+
+The system includes a **table_metadata** table that stores AI learnings and usage patterns:
+
+**Metadata Structure**:
+- `table_name` - Links to actual data table
+- `description` & `purpose` - Human-readable context
+- `ai_learnings` - JSON of accumulated AI insights about the table
+- `usage_patterns` - JSON of observed data patterns and user behaviors
+- `data_quality_notes` - Notes about data quality and common issues
+
+**AI Learning Examples**:
+```json
+{
+  "common_exercises": ["deadlift", "bench_press", "squat"],
+  "weight_units": "lbs", 
+  "typical_rep_ranges": "3-10 reps per set",
+  "data_patterns": "Users track compound movements most consistently"
+}
+```
+
+**How AI Learning Works**:
+1. **Table Creation**: Initial context stored when creating tables
+2. **Data Insertion**: Patterns learned from each data insertion
+3. **Schema Changes**: Reasons for modifications tracked
+4. **Query Analysis**: Frequently accessed data patterns noted
+5. **User Feedback**: Quality issues and preferences recorded
+
+**Memory Benefits**:
+- **Better Decisions**: AI knows which tables to use vs create new ones
+- **Context Awareness**: Understanding of data types, units, and patterns
+- **Quality Improvement**: Learning from past insertion successes/failures
+- **Usage Optimization**: Adapting to user's specific tracking preferences
 
 ## Common Usage Patterns
 
-- **New data type**: Use `create_table` with descriptive metadata
-- **Extend existing**: Use `add_column` when data fits existing table
-- **Store data**: Use `insert_data` after extraction
+- **New data type**: Use `create_table` with descriptive metadata and initial AI context
+- **Extend existing**: Use `edit_table_schema` when data fits existing table purpose  
+- **Store data**: Use `insert_data` after extraction (automatically updates AI learnings)
 - **Find patterns**: Use `query_data` with JOINs for correlations
+- **Review context**: Use `list_tables` with table name to see all AI learnings
 
 ## Error Handling
 
