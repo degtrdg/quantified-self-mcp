@@ -1,7 +1,7 @@
 [project]
-name = "spreadsheet-mcp"
-version = "0.1.0"
-description = "Add your description here"
+name = "quantified-self-mcp"
+version = "1.0.0"
+description = "Quantified self tracking system with MCP server and AI research agent"
 readme = "README.md"
 authors = [
     { name = "Daniel George", email = "66440666+degtrdg@users.noreply.github.com" }
@@ -11,13 +11,27 @@ dependencies = [
     "psycopg2-binary>=2.9.10",
     "python-dotenv>=1.1.1",
     "mcp>=1.0.0",
+    "fastapi>=0.104.1",
+    "uvicorn>=0.24.0",
+    "openai>=1.3.0",
+    "anthropic>=0.8.0",
+    "weave>=0.50.0",
+    "matplotlib>=3.8.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "seaborn>=0.12.0",
+    "requests>=2.31.0",
+    "Pillow>=10.0.0",
+    "e2b-code-interpreter>=1.5.2",
+    "ipykernel>=6.29.5",
+    "httpx>=0.25.0",
 ]
 
 [project.scripts]
 mcp-server = "apps.mcp_server.src.server:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["apps", "shared"]
+packages = ["apps", "research_agent"]
 
 [build-system]
 requires = ["hatchling"]
