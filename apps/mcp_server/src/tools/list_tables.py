@@ -1,5 +1,6 @@
 from mcp import Tool
 from ..database import db
+from .table_metadata import get_metadata, get_all_metadata, format_ai_learnings, format_usage_patterns
 
 LIST_TABLES_TOOL = Tool(
     name="list_tables",
@@ -55,8 +56,22 @@ async def handle_list_tables(arguments: dict) -> str:
             response = f"## Table: {info['table_name']}\n"
             response += f"**Description**: {info['description']}\n"
             response += f"**Purpose**: {info['purpose']}\n\n"
-            response += "**Columns**:\n"
             
+            # Get AI metadata
+            metadata = get_metadata(table_name)
+            if metadata:
+                if metadata['ai_learnings']:
+                    response += "**🧠 AI Learnings**:\n"
+                    response += format_ai_learnings(metadata['ai_learnings']) + "\n\n"
+                
+                if metadata['usage_patterns']:
+                    response += "**📊 Usage Patterns**:\n"
+                    response += format_usage_patterns(metadata['usage_patterns']) + "\n\n"
+                
+                if metadata['data_quality_notes']:
+                    response += f"**💡 Data Quality Notes**: {metadata['data_quality_notes']}\n\n"
+            
+            response += "**Columns**:\n"
             for col in info['columns']:
                 response += f"- `{col['column_name']}` ({col['data_type']})"
                 if col['description']:
@@ -79,15 +94,32 @@ async def handle_list_tables(arguments: dict) -> str:
         else:
             # Get overview of all tables
             tables = db.get_table_info()
+            all_metadata = get_all_metadata()
+            
+            # Create metadata lookup
+            metadata_lookup = {m['table_name']: m for m in all_metadata}
             
             response = "## Available Tables\n\n"
             for table in tables:
-                response += f"### {table['table_name']}\n"
+                table_name = table['table_name']
+                response += f"### {table_name}\n"
                 response += f"- **Description**: {table['description']}\n"
                 response += f"- **Purpose**: {table['purpose']}\n"
-                response += f"- **Columns**: {table['column_count']}\n\n"
+                response += f"- **Columns**: {table['column_count']}\n"
+                
+                # Add AI learnings summary if available
+                if table_name in metadata_lookup:
+                    metadata = metadata_lookup[table_name]
+                    if metadata['ai_learnings']:
+                        key_learnings = list(metadata['ai_learnings'].keys())[:3]  # Show first 3 keys
+                        response += f"- **AI Insights**: {', '.join(key_learnings)}"
+                        if len(metadata['ai_learnings']) > 3:
+                            response += f" (+{len(metadata['ai_learnings']) - 3} more)"
+                        response += "\n"
+                
+                response += "\n"
             
-            response += "\n*Use `list_tables` with a specific table_name for detailed schema information.*"
+            response += "\n*Use `list_tables` with a specific table_name for detailed schema and AI learnings.*"
             
             return response
             

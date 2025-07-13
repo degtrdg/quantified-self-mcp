@@ -1,5 +1,6 @@
 from mcp import Tool
 from ..database import db
+from .table_metadata import store_metadata
 
 CREATE_TABLE_TOOL = Tool(
     name="create_table",
@@ -98,28 +99,23 @@ async def handle_create_table(arguments: dict) -> str:
         """
         
         # Execute table creation
-        db.execute_command(create_sql)
+        success = await db.execute_query(create_sql)
+        if not success:
+            return f"❌ Error creating table: Database execution failed"
         
-        # Add table metadata
-        metadata_sql = """
-        INSERT INTO table_metadata (table_name, description, purpose) 
-        VALUES (%s, %s, %s)
-        """
-        db.execute_command(metadata_sql, (table_name, description, purpose))
+        # Store table metadata with AI learning structure
+        initial_learnings = {
+            "creation_context": f"Created for {purpose}",
+            "column_purposes": {col['name']: col['description'] for col in columns},
+            "data_types_chosen": {col['name']: col['type'] for col in columns}
+        }
         
-        # Add column metadata
-        for col in columns:
-            col_metadata_sql = """
-            INSERT INTO column_metadata (table_name, column_name, description, data_type, units) 
-            VALUES (%s, %s, %s, %s, %s)
-            """
-            db.execute_command(col_metadata_sql, (
-                table_name, 
-                col['name'], 
-                col['description'], 
-                col['type'],
-                col.get('units')
-            ))
+        await store_metadata(
+            table_name=table_name,
+            description=description,
+            purpose=purpose,
+            ai_learnings=initial_learnings
+        )
         
         return f"✅ Created table '{table_name}' with {len(columns)} custom columns plus standard fields (id, date, created_at)"
         

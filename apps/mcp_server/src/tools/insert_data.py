@@ -1,5 +1,6 @@
 from mcp import Tool
 from ..database import db
+from .table_metadata import update_ai_learning
 import json
 
 INSERT_DATA_TOOL = Tool(
@@ -97,19 +98,21 @@ async def handle_insert_data(arguments: dict) -> str:
         RETURNING id
         """
         
-        # Execute insert with explicit commit
-        if not db.conn:
-            db.connect()
+        # Execute insert
+        result = db.execute_query(insert_sql, values)
+        if not result:
+            return f"❌ Error inserting data into table '{table_name}'"
         
-        try:
-            with db.conn.cursor() as cur:
-                cur.execute(insert_sql, tuple(values))
-                result = [dict(row) for row in cur.fetchall()]
-                db.conn.commit()  # Explicit commit
-                new_id = result[0]['id'] if result else None
-        except Exception as e:
-            db.conn.rollback()
-            raise e
+        new_id = result[0]['id'] if result else None
+        
+        # Update AI learnings with insertion patterns
+        data_patterns = {
+            "recent_data_types": {k: str(type(v).__name__) for k, v in filtered_data.items()},
+            "recent_columns_used": list(filtered_data.keys()),
+            "last_insertion": str(filtered_data)
+        }
+        
+        update_ai_learning(table_name, "insertion_patterns", data_patterns)
         
         return f"✅ Inserted data into '{table_name}' (ID: {new_id})\nData: {json.dumps(filtered_data, default=str, indent=2)}"
         
