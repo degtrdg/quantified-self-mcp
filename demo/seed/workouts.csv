@@ -1,0 +1,33 @@
+id,exercise,date,sets,reps,weight,notes
+59cd3e97-5765-45f9-b683-9b2dc15a0ffd,bench_press,2022-11-15,1,3,125,3x bench press (80%)
+82803f08-4140-4318-aa8e-f1023c76d83e,front_squat,2022-11-17,1,6,105,6x front squat
+71f6c40b-5e4a-4dfc-b0b7-8d430159a9cd,bench_press,2022-11-22,1,3,95,3x bench press 90%
+d30b609a-a824-4b16-a7fb-c0e685ab424c,bench_press,2022-12-13,1,8,105,8x bench press
+738dcc90-28a1-4951-909c-e09f654273bd,sumo_deadlift,2022-12-15,1,8,95,8x sumo deadlift
+1efc83bc-13fe-448d-9190-b1c0f1b2405f,bench_press,2022-12-20,1,5,95,5x bench press 3s hold
+c245745f-4a9e-41c8-b7a1-e68da0aad9de,deadlift,2023-01-19,1,5,75,5x 1-3-1-2 bstance deadlift
+3d0f6730-2303-4d22-85d5-9d04b8676836,deadlift,2023-01-25,1,5,115,5x barbell continuous deadlift
+da9481dd-e6c6-4749-848b-f13e494bd3f9,deadlift,2023-02-09,1,5,115,5x barbell deadlift 3-1-2-1
+a5d1684f-e018-49a1-9976-fff0d7199262,romanian_deadlift,2023-02-24,1,8,85,8x Romanian deadlift
+67b547f5-28f3-4af7-a5de-ae3314297a3d,sumo_deadlift,2023-03-02,1,10,125,10x sumo deadlift
+f65abffd-90f5-4d45-b505-18c705a988c1,romanian_deadlift,2023-03-23,1,8,95,8x Romanian dl
+9b251de1-23b4-44c5-9d4c-2790318597e9,deadlift,2023-05-25,4,32,210,"Sldl: 45x10, 65x7, 75x5, 25x10"
+30bcba11-6427-4290-a7ca-ddb7348009dc,romanian_deadlift,2023-06-01,4,38,285,"12/10/8 Romanian deadlift: 45x12, 65x10, 85x8, 95x8"
+b0ed15bc-ecf1-4961-ba5c-065374357190,sumo_deadlift,2023-06-08,5,32,485,"Sumo deadlift ladder 8/6/4/4/6/8: 65x8, 95x6, 115x4, 145x4, 65x10"
+e7cc2c6e-77bc-41d1-8af0-28c731c8ad6a,front_squat,2023-06-19,7,39,515,"Front squats: 45x1, 65x2, 70x3, 75x4, 45x12, 75x10, 95x7"
+e5742a94-7c0c-466f-8f26-a8e35ad05754,bench_press,2023-06-23,3,7,185,"50 Bench press: 45x1, 75x2, 65x4"
+52230060-bc9e-4e7d-8cbf-de0d10622c56,front_squat,2023-06-25,4,27,255,"Bulgarian front squat: 45x10, 65x7, 75x5, 70x5"
+cd2a8408-6eb0-4f54-bfe7-b16abf4ecb97,romanian_deadlift,2023-06-29,4,30,295,"Romanian deadlift, til or hips up: 45x10, 75x8, 85x6, 95x6"
+bab8a270-ec48-41b8-81c3-73be276e8e62,dumbbell_bench_press,2023-06-03,3,30,50,"Db bench press: 15x12, 15x10, 20x8"
+9862457f-779f-4be9-9db2-14ab05997d41,deadlift,2023-06-06,3,23,215,"Barbell deadlift 10/8/5: 45x10, 75x8, 95x5"
+82101b61-632c-4464-a193-e750030baaca,bench_press,2023-07-12,5,16,475,"Barbell bench press: 75x4, 85x3, 95x3, 105x3, 115x3"
+d3e6f51e-3a62-41e3-a983-49bcd19b96c9,sumo_deadlift,2023-07-13,4,28,370,"Sumo deadlift 5x light: 65x10, 75x8, 105x5, 125x5"
+623998e0-0d2f-4934-bfe1-801d936dbd6b,back_squat,2023-07-17,3,16,185,"Barbell back squat 8/5/3/3/3: 45x8, 65x5, 75x3"
+ebbc08cc-bb2b-4092-b813-b2c34d5da436,bench_press,2023-07-18,4,19,270,"Bench press waist level: 45x8, 65x5, 75x3, 85x3"
+c56b33de-db65-4a95-a089-7536ada2f22b,sumo_deadlift,2023-07-25,6,36,630,"Sumo deadlift: 65x8, 95x6, 115x4, 125x4, 115x6, 95x8"
+319b611c-f6c3-4d1a-b134-bd47610a1b14,back_squat,2023-07-31,4,25,275,"Barbell back squat 10/7/5/3: 45x10, 75x7, 45x5, 115x3"
+8f2106b2-e736-411e-a9a2-d44138b19d66,bench_press,2023-08-01,4,25,310,"Bench press 10/7/5/3: 45x10, 75x7, 95x5, 95x3"
+49608443-be7e-4aac-92ae-de2cfdac47b7,back_squat,2023-08-06,5,19,349,"Back squat 5/5/3/3/3: 45x5, 65x5, 85x3, 95x3, 114x3"
+afdea291-9ae5-4c51-aa79-42b4b0df2bef,back_squat,2023-08-12,6,31,625,"Back squat 3x max: 65x10, 85x6, 105x4, 115x3, 125x3, 115x5"
+baeb4d3e-43cd-4e45-ab50-a0cfd3fc7da4,front_squat,2023-08-21,12,93,805,"Front squat barbell: 45x12, 55x12, 55x10, 55x10, 65x8, 75x8, 85x6, 85x6, 65x1, 75x2, 95x3, 95x4"
+0f56fabc-93f9-4b0a-b851-341f656f7862,reverse_lunge,2023-08-26,5,22,385,"Barbell reverse lunge: 45x6, 65x4, 85x4, 105x3, 85x5"
