@@ -178,36 +178,34 @@ TONE: Encouraging, insightful, and actionable - this is a daily review to motiva
             html_content = generate_html_report_content(
                 uploaded_files, charts, analysis_text
             )
-        
+
         # Ensure html_content is a string and not None/undefined
         if not html_content:
             html_content = "Your daily health analysis is ready."
-        
+
         # Save HTML to file
         try:
             import os
             from datetime import datetime
-            
+
             # Create reports directory if it doesn't exist
             reports_dir = "reports"
             os.makedirs(reports_dir, exist_ok=True)
-            
+
             # Generate filename with timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             html_filename = f"{reports_dir}/daily_health_report_{timestamp}.html"
-            
-            with open(html_filename, 'w', encoding='utf-8') as f:
+
+            with open(html_filename, "w", encoding="utf-8") as f:
                 f.write(html_content)
-            
+
             print(f"📄 HTML report saved to: {html_filename}")
-            
+
         except Exception as e:
             print(f"⚠️ Failed to save HTML report: {e}")
 
         # Prepare payload for n8n - ensure email is always a string
-        payload = {
-            "email": str(html_content).strip()
-        }
+        payload = {"email": str(html_content).strip()}
 
         print(f"🔍 Sending payload to n8n:")
         print(f"   - URL: {self.n8n_webhook_url}")
@@ -240,11 +238,13 @@ TONE: Encouraging, insightful, and actionable - this is a daily review to motiva
                 }
 
         except requests.exceptions.Timeout:
-            print(f"⚠️ n8n webhook timeout (120s) - email workflow may still be processing")
+            print(
+                f"⚠️ n8n webhook timeout (120s) - email workflow may still be processing"
+            )
             return {
                 "success": True,  # Consider it successful since webhook received the data
                 "message": "Email workflow started (timeout occurred but processing continues)",
-                "warning": "Webhook timed out after 120s but n8n workflow is likely still processing the email"
+                "warning": "Webhook timed out after 120s but n8n workflow is likely still processing the email",
             }
         except requests.exceptions.RequestException as e:
             print(f"❌ n8n webhook error: {str(e)}")
@@ -264,13 +264,14 @@ TONE: Encouraging, insightful, and actionable - this is a daily review to motiva
             Summary of the analysis and delivery process
         """
         import logging
+
         logger = logging.getLogger(__name__)
-        
+
         # Generate analysis
         focus_msg = f" with focus on '{focus}'" if focus else ""
         logger.info(f"🔄 Generating end-of-day analysis{focus_msg}...")
         print(f"🔄 Generating end-of-day analysis{focus_msg}...")
-        
+
         logger.info("📊 Starting analysis report generation...")
         analysis_result = self.generate_analysis_report(focus)
 
@@ -279,7 +280,9 @@ TONE: Encouraging, insightful, and actionable - this is a daily review to motiva
             logger.error(error_msg)
             return error_msg
 
-        logger.info(f"✅ Analysis generation completed with {analysis_result['chart_count']} charts")
+        logger.info(
+            f"✅ Analysis generation completed with {analysis_result['chart_count']} charts"
+        )
         print(f"✅ Analysis completed with {analysis_result['chart_count']} charts")
 
         # Send to n8n if webhook URL is configured
@@ -287,7 +290,7 @@ TONE: Encouraging, insightful, and actionable - this is a daily review to motiva
             logger.info("📧 Sending to email workflow...")
             print("📧 Sending to email workflow...")
             uploaded_files = analysis_result.get("uploaded_files", [])
-            
+
             logger.info(f"📎 Uploading {len(uploaded_files)} files to n8n workflow")
             email_result = self.send_to_n8n_workflow(analysis_result, uploaded_files)
 
