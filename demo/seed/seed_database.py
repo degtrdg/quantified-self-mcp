@@ -37,7 +37,12 @@ def seed_workouts(conn):
             cursor.execute("""
                 INSERT INTO workouts (id, exercise, date, sets, reps, weight, created_at)
                 VALUES (%s, %s, %s, %s, %s, %s, NOW())
-                ON CONFLICT (id) DO NOTHING
+                ON CONFLICT (id) DO UPDATE SET
+                    exercise = EXCLUDED.exercise,
+                    date = EXCLUDED.date,
+                    sets = EXCLUDED.sets,
+                    reps = EXCLUDED.reps,
+                    weight = EXCLUDED.weight
             """, (
                 row['id'],
                 row['exercise'],
@@ -64,9 +69,17 @@ def seed_food(conn):
             date = datetime.strptime(row['date'], '%Y-%m-%d').date()
             
             cursor.execute("""
-                INSERT INTO food (id, dish_name, meal_type, estimated_calories, protein_grams, carbs_grams, fat_grams, date, created_at)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())
-                ON CONFLICT (id) DO NOTHING
+                INSERT INTO food (id, dish_name, meal_type, estimated_calories, protein_grams, carbs_grams, fat_grams, feeling_after, date, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                ON CONFLICT (id) DO UPDATE SET
+                    dish_name = EXCLUDED.dish_name,
+                    meal_type = EXCLUDED.meal_type,
+                    estimated_calories = EXCLUDED.estimated_calories,
+                    protein_grams = EXCLUDED.protein_grams,
+                    carbs_grams = EXCLUDED.carbs_grams,
+                    fat_grams = EXCLUDED.fat_grams,
+                    feeling_after = EXCLUDED.feeling_after,
+                    date = EXCLUDED.date
             """, (
                 row['id'],
                 row['dish_name'],
@@ -75,6 +88,7 @@ def seed_food(conn):
                 float(row['protein']),
                 float(row['carbs']),
                 float(row['fats']),
+                row['feeling_after'] if row['feeling_after'] else None,
                 date
             ))
         

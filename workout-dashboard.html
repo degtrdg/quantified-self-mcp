@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Progress Dashboard</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-chartjs-2@5.2.0/dist/index.umd.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f7;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .dashboard-header h1 {
+            color: #1d1d1f;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .dashboard-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #007aff;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Real workout data from MCP queries
+        const workoutData = {
+            exerciseFrequency: [
+                { exercise: 'Bench Press', sessions: 8, totalVolume: 95380, maxWeight: 475 },
+                { exercise: 'Sumo Deadlift', sessions: 5, totalVolume: 257130, maxWeight: 630 },
+                { exercise: 'Deadlift', sessions: 5, totalVolume: 43240, maxWeight: 215 },
+                { exercise: 'Romanian DL', sessions: 4, totalVolume: 80160, maxWeight: 295 },
+                { exercise: 'Back Squat', sessions: 4, totalVolume: 185785, maxWeight: 625 },
+                { exercise: 'Front Squat', sessions: 4, totalVolume: 1067145, maxWeight: 805 }
+            ],
+            progressionData: {
+                benchPress: [
+                    { date: '2022-11-15', weight: 125, reps: 3, volume: 375 },
+                    { date: '2022-11-22', weight: 95, reps: 3, volume: 285 },
+                    { date: '2022-12-13', weight: 105, reps: 8, volume: 840 },
+                    { date: '2022-12-20', weight: 95, reps: 5, volume: 475 },
+                    { date: '2023-06-23', weight: 75, reps: 7, volume: 525 },
+                    { date: '2023-07-12', weight: 115, reps: 17, volume: 1955 },
+                    { date: '2023-07-18', weight: 85, reps: 19, volume: 1615 },
+                    { date: '2023-08-01', weight: 95, reps: 25, volume: 2375 }
+                ],
+                sumoDeadlift: [
+                    { date: '2022-12-15', weight: 95, reps: 8, volume: 760 },
+                    { date: '2023-03-02', weight: 125, reps: 10, volume: 1250 },
+                    { date: '2023-06-08', weight: 145, reps: 32, volume: 4640 },
+                    { date: '2023-07-13', weight: 125, reps: 28, volume: 3500 },
+                    { date: '2023-07-25', weight: 125, reps: 36, volume: 4500 }
+                ],
+                backSquat: [
+                    { date: '2023-07-17', weight: 75, reps: 16, volume: 1200 },
+                    { date: '2023-07-31', weight: 115, reps: 25, volume: 2875 },
+                    { date: '2023-08-06', weight: 114, reps: 19, volume: 2166 },
+                    { date: '2023-08-12', weight: 125, reps: 31, volume: 3875 }
+                ]
+            },
+            monthlyVolume: [
+                { month: '2022-11', volume: 660, sessions: 2 },
+                { month: '2022-12', volume: 2075, sessions: 3 },
+                { month: '2023-01', volume: 1335, sessions: 2 },
+                { month: '2023-02', volume: 2080, sessions: 3 },
+                { month: '2023-03', volume: 2630, sessions: 2 },
+                { month: '2023-05', volume: 4720, sessions: 2 },
+                { month: '2023-06', volume: 10850, sessions: 6 },
+                { month: '2023-07', volume: 18910, sessions: 5 },
+                { month: '2023-08', volume: 906545, sessions: 4 }
+            ]
+        };
+
+        const ExerciseFrequencyChart = () => {
+            const data = {
+                labels: workoutData.exerciseFrequency.map(item => item.exercise),
+                datasets: [{
+                    label: 'Sessions',
+                    data: workoutData.exerciseFrequency.map(item => item.sessions),
+                    backgroundColor: [
+                        '#007aff', '#5856d6', '#af52de', '#ff2d92', '#ff3b30', '#ff9500'
+                    ],
+                    borderWidth: 0
+                }]
+            };
+
+            const options = {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: (context) => {
+                                const exercise = workoutData.exerciseFrequency[context.dataIndex];
+                                return [`Total Volume: ${exercise.totalVolume.toLocaleString()}`, `Max Weight: ${exercise.maxWeight} lbs`];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            };
+
+            return <canvas ref={(canvas) => {
+                if (canvas) {
+                    new Chart(canvas, { type: 'bar', data, options });
+                }
+            }} />;
+        };
+
+        const ProgressionChart = () => {
+            const data = {
+                datasets: [
+                    {
+                        label: 'Bench Press',
+                        data: workoutData.progressionData.benchPress.map(item => ({
+                            x: item.date,
+                            y: item.weight
+                        })),
+                        borderColor: '#007aff',
+                        backgroundColor: '#007aff20',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Sumo Deadlift',
+                        data: workoutData.progressionData.sumoDeadlift.map(item => ({
+                            x: item.date,
+                            y: item.weight
+                        })),
+                        borderColor: '#ff3b30',
+                        backgroundColor: '#ff3b3020',
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Back Squat',
+                        data: workoutData.progressionData.backSquat.map(item => ({
+                            x: item.date,
+                            y: item.weight
+                        })),
+                        borderColor: '#30d158',
+                        backgroundColor: '#30d15820',
+                        tension: 0.4
+                    }
+                ]
+            };
+
+            const options = {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: { unit: 'month' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Weight (lbs)' },
+                        beginAtZero: true
+                    }
+                }
+            };
+
+            return <canvas ref={(canvas) => {
+                if (canvas) {
+                    new Chart(canvas, { type: 'line', data, options });
+                }
+            }} />;
+        };
+
+        const VolumeChart = () => {
+            const data = {
+                labels: workoutData.monthlyVolume.map(item => item.month),
+                datasets: [{
+                    label: 'Monthly Volume',
+                    data: workoutData.monthlyVolume.map(item => item.volume),
+                    backgroundColor: '#5856d6',
+                    borderColor: '#5856d6',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            };
+
+            const options = {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Total Volume' },
+                        beginAtZero: true
+                    }
+                }
+            };
+
+            return <canvas ref={(canvas) => {
+                if (canvas) {
+                    new Chart(canvas, { type: 'line', data, options });
+                }
+            }} />;
+        };
+
+        const Dashboard = () => {
+            const totalSessions = workoutData.exerciseFrequency.reduce((sum, ex) => sum + ex.sessions, 0);
+            const totalVolume = workoutData.exerciseFrequency.reduce((sum, ex) => sum + ex.totalVolume, 0);
+            const maxWeight = Math.max(...workoutData.exerciseFrequency.map(ex => ex.maxWeight));
+            const activePeriod = 9; // months from Nov 2022 to Aug 2023
+
+            return (
+                <div className="dashboard">
+                    <div className="dashboard-header">
+                        <h1>💪 Workout Progress Dashboard</h1>
+                        <p>Analyzing your training data from November 2022 - August 2023</p>
+                    </div>
+
+                    <div className="stats-grid">
+                        <div className="stat-card">
+                            <div className="stat-value">{totalSessions}</div>
+                            <div className="stat-label">Total Sessions</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{(totalVolume / 1000000).toFixed(1)}M</div>
+                            <div className="stat-label">Total Volume</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{maxWeight}</div>
+                            <div className="stat-label">Max Weight (lbs)</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{activePeriod}</div>
+                            <div className="stat-label">Active Months</div>
+                        </div>
+                    </div>
+
+                    <div className="chart-grid">
+                        <div className="chart-container">
+                            <div className="chart-title">Exercise Frequency</div>
+                            <ExerciseFrequencyChart />
+                        </div>
+
+                        <div className="chart-container">
+                            <div className="chart-title">Monthly Training Volume</div>
+                            <VolumeChart />
+                        </div>
+
+                        <div className="chart-container full-width">
+                            <div className="chart-title">Weight Progression by Exercise</div>
+                            <ProgressionChart />
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<Dashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
